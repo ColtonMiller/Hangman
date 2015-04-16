@@ -17,28 +17,39 @@ namespace HangMan
         public static List<string> hiddenWord = new List<string> {};
         static string actualWord = string.Empty;
         static string tempHiddenWord = string.Empty;
+        static bool changeHiddenWordBool = true;
+        static string previousGuesses = string.Empty;
         static void Main(string[] args)
         {
             StartScreen();
+            WordHidden();
+            Console.WriteLine(tempHiddenWord);
             while (playing == true)
             {
-                WordHidden();
+
+                Console.WriteLine("You have {0} lives left", counterLives);
                 string userUnvalidated = Console.ReadLine();
                 if (ValidateUserInput(userUnvalidated))
                 {
                     if (counterLives != 0)
                     {
-                        if (ChangeHiddenWord(usersGuess) == true)
-                        {
-                            
-                        }
 
-                        ChangeHiddenWord(usersGuess);
-                        Console.ReadKey();
+                            if (ChangeHiddenWord(usersGuess) == true)
+                            {
+                                Console.Clear();
+                                Console.WriteLine(tempHiddenWord);
+                                Console.WriteLine("");
+                                Console.Write("Guesses: ");
+                                IncrementGuessString(usersGuess);
+                            }
+                            else
+                            {
+                                
+                            }
                     }
                     else
                     {
-
+                        Console.WriteLine("You have lost the game");
                     }
                 }
                 else
@@ -67,10 +78,14 @@ namespace HangMan
         }
         static bool ValidateUserInput(string userInput)
         {
-            userInput.ToUpper();
-            if ("ABCDEFGHIJKLMNOPQRSTUVWXYZ".Contains(userInput))
+            if ("ABCDEFGHIJKLMNOPQRSTUVWXYZ".Contains(userInput.ToUpper()))
             {
-                userInput = usersGuess;
+                usersGuess = userInput;
+                return true;
+            }
+            else if (userInput.ToUpper() == actualWord)
+            {
+                usersGuess = userInput;
                 return true;
             }
             return false;
@@ -84,29 +99,35 @@ namespace HangMan
                 hiddenWord.Add("_");
             }
             tempHiddenWord = string.Join(" ", hiddenWord);
-            Console.WriteLine(tempHiddenWord);
+        }
+
+        static void IncrementGuessString(string letterGuessed)
+        {
+            previousGuesses += letterGuessed + " ";
+            Console.WriteLine(previousGuesses);
         }
         static bool ChangeHiddenWord(string guess)
         {
-            if (actualWord.Contains(guess))
-            {
-                if (guess.Length == 1)
-	            {
-                    
-                    char tempLetter = guess[0];
-                    for (int i = 0; i < actualWord.Length; i++)
-                    {
-                        if (tempLetter == actualWord[i])
-                        {
-                            hiddenWord[i] = tempLetter.ToString();
-                            tempHiddenWord = string.Join(" ", hiddenWord);
-                            Console.WriteLine(tempHiddenWord);
-                            return true;
-                        }
 
-                    }
+            if (actualWord.Contains(usersGuess.ToUpper()))
+            {
+                string tempGuessList = string.Empty;
+                for (int i = 0; i < guess.Length; i++)
+                {
+                    tempGuessList += guess[i];
                 }
-                
+
+                for (int i = 0; i < actualWord.Length; i++)
+                {
+                    if (tempGuessList[i] == actualWord[i])
+                    {
+                        hiddenWord[i] = tempLetter.ToString();
+                        tempHiddenWord = string.Join(" ", hiddenWord);
+                    }
+
+                }
+                return true;
+
             }
             return false;
         }
