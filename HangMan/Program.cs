@@ -14,23 +14,37 @@ namespace HangMan
         static int counterLives = 8;
         static string usersGuess = string.Empty;
         static bool playing = true;
-        static string hiddenWord = string.Empty;
+        public static List<string> hiddenWord = new List<string> {};
         static string actualWord = string.Empty;
+        static string tempHiddenWord = string.Empty;
         static void Main(string[] args)
         {
             StartScreen();
             while (playing == true)
             {
-                if (counterLives != 0)
+                WordHidden();
+                string userUnvalidated = Console.ReadLine();
+                if (ValidateUserInput(userUnvalidated))
                 {
-                    WordHidden();
-                    Console.ReadKey();  
+                    if (counterLives != 0)
+                    {
+                        if (ChangeHiddenWord(usersGuess) == true)
+                        {
+                            
+                        }
+
+                        ChangeHiddenWord(usersGuess);
+                        Console.ReadKey();
+                    }
+                    else
+                    {
+
+                    }
                 }
                 else
                 {
-
+                    Console.WriteLine("Invalid Response");
                 }
-
             }
             Console.ReadKey();
         }
@@ -67,26 +81,34 @@ namespace HangMan
             actualWord = possibleWords[randomWordInt];
             for (int i = 0; i < actualWord.Length; i++)
             {
-                hiddenWord += "_";
+                hiddenWord.Add("_");
             }
-            Console.WriteLine(hiddenWord);
+            tempHiddenWord = string.Join(" ", hiddenWord);
+            Console.WriteLine(tempHiddenWord);
         }
-        static void ChangeHiddenWord(string guess)
+        static bool ChangeHiddenWord(string guess)
         {
             if (actualWord.Contains(guess))
             {
                 if (guess.Length == 1)
 	            {
+                    
                     char tempLetter = guess[0];
                     for (int i = 0; i < actualWord.Length; i++)
                     {
-                        if (actualWord[i] == tempLetter)
+                        if (tempLetter == actualWord[i])
                         {
-                            hiddenWord.Replace('_',actualWord[i] );
+                            hiddenWord[i] = tempLetter.ToString();
+                            tempHiddenWord = string.Join(" ", hiddenWord);
+                            Console.WriteLine(tempHiddenWord);
+                            return true;
                         }
+
                     }
                 }
+                
             }
+            return false;
         }
     }   
 }
