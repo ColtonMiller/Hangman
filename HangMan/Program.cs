@@ -11,46 +11,49 @@ namespace HangMan
         static string usersName = string.Empty;
         static string[] possibleWords = {"TURTLE","DATSUN","SPACEDONKEY","NICKLEBACK","DOGS","DOLPHINS",};
         static Random rng = new Random();
-        static int counterLives = 8;
+        static int counterLives = 7;
         static string usersGuess = string.Empty;
         static bool playing = true;
         public static List<string> hiddenWord = new List<string> {};
         static string actualWord = string.Empty;
         static string tempHiddenWord = string.Empty;
-        static bool changeHiddenWordBool = true;
         static string previousGuesses = string.Empty;
         static void Main(string[] args)
         {
             StartScreen();
             WordHidden();
-            Console.WriteLine(tempHiddenWord);
             while (playing == true)
             {
-
+                Console.Clear();
                 Console.WriteLine("You have {0} lives left", counterLives);
+                Console.WriteLine(tempHiddenWord);
+                Console.Write("Guesses: ");
+                IncrementGuessString(usersGuess);
                 string userUnvalidated = Console.ReadLine();
                 if (ValidateUserInput(userUnvalidated))
                 {
-                    if (counterLives != 0)
-                    {
-
-                            if (ChangeHiddenWord(usersGuess) == true)
+                        if (counterLives != 0 )
+                        {
+                            if (tempHiddenWord == MakeWordSpace(actualWord))
                             {
-                                Console.Clear();
-                                Console.WriteLine(tempHiddenWord);
-                                Console.WriteLine("");
-                                Console.Write("Guesses: ");
-                                IncrementGuessString(usersGuess);
+                                Console.WriteLine("Congradulations You win");
+                                playing = false;
                             }
-                            else
-                            {
-                                
-                            }
-                    }
-                    else
-                    {
-                        Console.WriteLine("You have lost the game");
-                    }
+                                if ()
+                                {
+                                    ChangeHiddenWord(usersGuess);                                
+                                }
+                                else
+                                {
+                                    counterLives--;
+                                }
+                        }
+                        else
+                        {
+                            Console.WriteLine("You have lost the game");
+                            playing = false;
+                            Console.ReadKey();
+                        }
                 }
                 else
                 {
@@ -75,6 +78,18 @@ namespace HangMan
             Console.WriteLine("                         Press any key to continue...                           ");
             Console.ReadKey();
             Console.Clear();
+        }
+        static string MakeWordSpace(string input)
+        {
+            List<char> tempActualList = new List<char> { };
+                for (int i = 0; i < input.Length; i++)
+			{
+                tempActualList.Add(input[i]);
+			}
+                tempActualList.ToArray();
+            string tempActualstring = string.Join(" ", tempActualList);
+            return  tempActualstring;
+
         }
         static bool ValidateUserInput(string userInput)
         {
@@ -103,7 +118,7 @@ namespace HangMan
 
         static void IncrementGuessString(string letterGuessed)
         {
-            previousGuesses += letterGuessed + " ";
+            previousGuesses += (letterGuessed + " ");
             Console.WriteLine(previousGuesses);
         }
         static bool ChangeHiddenWord(string guess)
@@ -117,12 +132,20 @@ namespace HangMan
                     tempGuessList += guess[i];
                 }
 
+                if (tempGuessList.ToUpper() == actualWord)
+                {
+                    tempHiddenWord = string.Join(" ", tempGuessList).ToUpper();
+                    return false;
+                }
+
                 for (int i = 0; i < actualWord.Length; i++)
                 {
-                    if (tempGuessList[i] == actualWord[i])
+
+                    if (tempGuessList.ToUpper()[0] == actualWord[i] && guess.Length == 1)
                     {
-                        hiddenWord[i] = tempLetter.ToString();
-                        tempHiddenWord = string.Join(" ", hiddenWord);
+                        string[] temptempHiddenword = tempHiddenWord.Split(' ');
+                        temptempHiddenword[i] = tempGuessList.ToString().ToUpper();
+                        tempHiddenWord = string.Join(" ", temptempHiddenword);
                     }
 
                 }
